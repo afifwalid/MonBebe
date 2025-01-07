@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وجبات بروتينية متنوعة للرضع</title>
+    <style>
+        body {
+            font-family: "Cairo", Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        section {
+            margin: 20px auto;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        h3 {
+            margin-top: 20px;
+            color: #4CAF50;
+        }
+        ul {
+            text-align: left;
+            padding: 0 20px;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <header>برنامج وجبات بروتينية للرضع</header>
+    <section>
+        <h2>اختيار الفئة العمرية</h2>
+        <select id="ageGroup" onchange="showMeals()">
+            <option value="">-- اختر عمر طفلك --</option>
+            <option value="6-8">6-8 أشهر</option>
+            <option value="9-11">9-11 شهرًا</option>
+            <option value="12+">12 شهرًا فأكثر</option>
+        </select>
+        <div id="mealsList" class="output"></div>
+        <div id="mealDetails" class="output"></div>
+    </section>
+
+    <footer>بالصحة والهناء لطفلك!</footer>
+
+    <script>
+        const meals = {
+            "6-8": [
+                { name: "مهروس الدجاج والجزر", ingredients: ["صدر دجاج صغير", "جزر مسلوق"], preparation: "اسلق المكونات واهرسها جيدًا." },
+                { name: "عدس مهروس مع البطاطس", ingredients: ["عدس", "بطاطس مسلوقة"], preparation: "اطبخ العدس مع البطاطس واهرسهما معًا." },
+                { name: "مهروس السبانخ والبيض", ingredients: ["سبانخ مطبوخة", "صفار بيضة مسلوق"], preparation: "اهرس المكونات مع القليل من الماء." },
+                { name: "كوسا مطهية مع الدجاج", ingredients: ["دجاج", "كوسا مقطعة"], preparation: "اطبخ المكونات مع القليل من الماء واهرسها." },
+                { name: "سمك أبيض مهروس مع البطاطا الحلوة", ingredients: ["سمك أبيض", "بطاطا حلوة"], preparation: "اسلق البطاطا والسمك واهرسهما." }
+            ],
+            "9-11": [
+                { name: "شوربة الدجاج بالكوسا", ingredients: ["دجاج", "كوسا", "شوربة خفيفة"], preparation: "اطبخ المكونات واطحنها بالخلاط." },
+                { name: "أرز بالدجاج والخضروات", ingredients: ["أرز مطهو", "دجاج مقطع", "جزر مهروس"], preparation: "امزج الأرز مع الدجاج والخضروات." },
+                { name: "كبدة دجاج مشوية مع الخضروات", ingredients: ["كبدة دجاج", "بطاطس", "بروكلي"], preparation: "اشوِ المكونات واهرسها معًا." },
+                { name: "لحم مفروم مع القرع", ingredients: ["لحم مفروم", "قرع مسلوق"], preparation: "اطبخ المكونات واهرسها حتى تنعم." },
+                { name: "بيض مطهو مع الكوسا", ingredients: ["بيض", "كوسا مطبوخة"], preparation: "اخلط البيض مع الكوسا المهروسة." }
+            ],
+            "12+": [
+                { name: "كرات اللحم بالخضروات", ingredients: ["لحم مفروم", "بطاطس", "كوسا"], preparation: "شكل كرات صغيرة واطبخها بالبخار." },
+                { name: "أرز بني مع السمك المشوي", ingredients: ["أرز بني", "سمك مشوي"], preparation: "قدم الأرز مع السمك المطبوخ." },
+                { name: "بيض أومليت بالخضروات", ingredients: ["بيض", "جزر مفروم", "بصل"], preparation: "اخفق البيض واطبخه مع الخضروات." },
+                { name: "لحم مفروم مع العدس", ingredients: ["عدس", "لحم مفروم"], preparation: "اطبخ المكونات واهرسها معًا." },
+                { name: "مكرونة بالدجاج المهروس", ingredients: ["مكرونة صغيرة", "دجاج مفروم"], preparation: "اطبخ المكرونة مع الدجاج واهرسهما." }
+            ]
+        };
+
+        function showMeals() {
+            const ageGroup = document.getElementById("ageGroup").value;
+            const mealsList = document.getElementById("mealsList");
+            const mealDetails = document.getElementById("mealDetails");
+            mealsList.innerHTML = "";
+            mealDetails.innerHTML = "";
+
+            if (ageGroup && meals[ageGroup]) {
+                let listHtml = "<h3>اختر وجبة:</h3><select id='mealSelector' onchange='showMealDetails()'>";
+                listHtml += "<option value=''>-- اختر وجبة --</option>";
+                meals[ageGroup].forEach((meal, index) => {
+                    listHtml += `<option value="${index}">${meal.name}</option>`;
+                });
+                listHtml += "</select>";
+                mealsList.innerHTML = listHtml;
+            } else {
+                mealsList.innerHTML = "<p>يرجى اختيار عمر طفلك لعرض الوجبات.</p>";
+            }
+        }
+
+        function showMealDetails() {
+            const ageGroup = document.getElementById("ageGroup").value;
+            const mealSelector = document.getElementById("mealSelector");
+            const selectedMealIndex = mealSelector.value;
+            const mealDetails = document.getElementById("mealDetails");
+
+            if (selectedMealIndex && meals[ageGroup]) {
+                const meal = meals[ageGroup][selectedMealIndex];
+                mealDetails.innerHTML = `
+                    <h3>${meal.name}</h3>
+                    <p><strong>المكونات:</strong></p>
+                    <ul>${meal.ingredients.map(ingredient => `<li>${ingredient}</li>`).join("")}</ul>
+                    <p><strong>طريقة التحضير:</strong> ${meal.preparation}</p>
+                    <p style="color: green;">بالصحة والهناء لطفلك!</p>
+                `;
+            } else {
+                mealDetails.innerHTML = "";
+            }
+        }
+    </script>
+</body>
+</html>
